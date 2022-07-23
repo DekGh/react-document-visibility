@@ -1,2 +1,55 @@
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("react")):"function"==typeof define&&define.amd?define(["exports","react"],t):t((e||self).reactDocumentVisibility={},e.react)}(this,function(e,t){function n(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,i=new Array(t);n<t;n++)i[n]=e[n];return i}e.useDocumentVisibility=function(){var e=t.useState(!document.hidden),i=e[0],r=e[1],o=t.useState(0),u=o[0],a=o[1],c=function(){console.log(s),document.hidden?(f("isVisible","hidden"),r(!1),a(function(e){return e+1})):(f("isVisible","visible"),r(!0))};t.useEffect(function(){return document.addEventListener("visibilitychange",c),function(){return document.removeEventListener("visibilitychange",c)}},[]);var s=t.useRef({isVisible:[]}),f=function(e,t){if(s.current[e])for(var i,r=function(e,t){var i="undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(i)return(i=i.call(e)).next.bind(i);if(Array.isArray(e)||(i=function(e,t){if(e){if("string"==typeof e)return n(e,t);var i=Object.prototype.toString.call(e).slice(8,-1);return"Object"===i&&e.constructor&&(i=e.constructor.name),"Map"===i||"Set"===i?Array.from(e):"Arguments"===i||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(i)?n(e,t):void 0}}(e))){i&&(e=i);var r=0;return function(){return r>=e.length?{done:!0}:{done:!1,value:e[r++]}}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}(s.current[e]);!(i=r()).done;)(0,i.value)(t)};return{onVisibilityChange:function(e){s.current.isVisible.push(e)},visible:i,count:u}}});
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'react'], factory) :
+    (global = global || self, factory(global.reactDocumentVisibility = {}, global.React));
+})(this, (function (exports, react) { 'use strict';
+
+    var useDocumentVisibility = function useDocumentVisibility() {
+      var _useState = react.useState(!document.hidden),
+          visible = _useState[0],
+          setVisible = _useState[1];
+
+      var _useState2 = react.useState(0),
+          count = _useState2[0],
+          setCount = _useState2[1];
+
+      var subsribers = react.useRef([]);
+
+      var visiblePage = function visiblePage() {
+        if (document.hidden) {
+          subsribers.current.forEach(function (func) {
+            return func('hidden');
+          });
+          setCount(function (prevCount) {
+            return prevCount + 1;
+          });
+        } else {
+          subsribers.current.forEach(function (func) {
+            return func('visible');
+          });
+        }
+
+        setVisible(document.visibilityState === "visible");
+      };
+
+      var onVisibilityChange = function onVisibilityChange(callback) {
+        subsribers.current.push(callback);
+      };
+
+      react.useEffect(function () {
+        document.addEventListener('visibilitychange', visiblePage);
+        return function () {
+          document.removeEventListener('visibilitychange', visiblePage);
+        };
+      }, []);
+      return {
+        onVisibilityChange: onVisibilityChange,
+        visible: visible,
+        count: count
+      };
+    };
+
+    exports.useDocumentVisibility = useDocumentVisibility;
+
+}));
 //# sourceMappingURL=index.umd.js.map

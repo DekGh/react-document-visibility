@@ -1,2 +1,49 @@
-import{useState as i,useEffect as e,useRef as n}from"react";const t=()=>{const[t,s]=i(!document.hidden),[o,r]=i(0),c=()=>{console.log(d),document.hidden?(l("isVisible","hidden"),s(!1),r(i=>i+1)):(l("isVisible","visible"),s(!0))};e(()=>(document.addEventListener("visibilitychange",c),()=>document.removeEventListener("visibilitychange",c)),[]);const d=n({isVisible:[]}),l=(i,e)=>{if(d.current[i])for(let n of d.current[i])n(e)};return{onVisibilityChange:i=>{d.current.isVisible.push(i)},visible:t,count:o}};export{t as useDocumentVisibility};
+import { useState, useRef, useEffect } from 'react';
+
+var useDocumentVisibility = function useDocumentVisibility() {
+  var _useState = useState(!document.hidden),
+      visible = _useState[0],
+      setVisible = _useState[1];
+
+  var _useState2 = useState(0),
+      count = _useState2[0],
+      setCount = _useState2[1];
+
+  var subsribers = useRef([]);
+
+  var visiblePage = function visiblePage() {
+    if (document.hidden) {
+      subsribers.current.forEach(function (func) {
+        return func('hidden');
+      });
+      setCount(function (prevCount) {
+        return prevCount + 1;
+      });
+    } else {
+      subsribers.current.forEach(function (func) {
+        return func('visible');
+      });
+    }
+
+    setVisible(document.visibilityState === "visible");
+  };
+
+  var onVisibilityChange = function onVisibilityChange(callback) {
+    subsribers.current.push(callback);
+  };
+
+  useEffect(function () {
+    document.addEventListener('visibilitychange', visiblePage);
+    return function () {
+      document.removeEventListener('visibilitychange', visiblePage);
+    };
+  }, []);
+  return {
+    onVisibilityChange: onVisibilityChange,
+    visible: visible,
+    count: count
+  };
+};
+
+export { useDocumentVisibility };
 //# sourceMappingURL=index.modern.mjs.map
