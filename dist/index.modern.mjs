@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 var useDocumentVisibility = function useDocumentVisibility() {
-  var _useState = useState(!document.hidden),
+  var _useState = useState(typeof document !== 'undefined' && !document.hidden),
       visible = _useState[0],
       setVisible = _useState[1];
 
@@ -13,18 +13,14 @@ var useDocumentVisibility = function useDocumentVisibility() {
 
   var visiblePage = function visiblePage() {
     if (document.hidden) {
-      subsribers.current.forEach(function (func) {
-        return func('hidden');
-      });
       setCount(function (prevCount) {
         return prevCount + 1;
       });
-    } else {
-      subsribers.current.forEach(function (func) {
-        return func('visible');
-      });
     }
 
+    subsribers.current.forEach(function (func) {
+      return func(!document.hidden);
+    });
     setVisible(document.visibilityState === "visible");
   };
 

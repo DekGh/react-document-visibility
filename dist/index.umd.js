@@ -5,7 +5,7 @@
 })(this, (function (exports, react) { 'use strict';
 
     var useDocumentVisibility = function useDocumentVisibility() {
-      var _useState = react.useState(!document.hidden),
+      var _useState = react.useState(typeof document !== 'undefined' && !document.hidden),
           visible = _useState[0],
           setVisible = _useState[1];
 
@@ -17,18 +17,14 @@
 
       var visiblePage = function visiblePage() {
         if (document.hidden) {
-          subsribers.current.forEach(function (func) {
-            return func('hidden');
-          });
           setCount(function (prevCount) {
             return prevCount + 1;
           });
-        } else {
-          subsribers.current.forEach(function (func) {
-            return func('visible');
-          });
         }
 
+        subsribers.current.forEach(function (func) {
+          return func(!document.hidden);
+        });
         setVisible(document.visibilityState === "visible");
       };
 

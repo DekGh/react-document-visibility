@@ -1,5 +1,5 @@
 export declare const useDocumentVisibility: () => {
-    onVisibilityChange: (callback: (data: string) => void) => void;
+    onVisibilityChange: (callback: (data: boolean) => void) => void;
     visible: boolean;
     count: number;
 };
